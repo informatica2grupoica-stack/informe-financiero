@@ -208,7 +208,32 @@ export async function exportarExcel(
     row.getCell("pct").numFmt = "0.0%";
   }
 
+  // ============ HOJA: MEJORAS Y RECOMENDACIONES ============
+  if (a.recomendaciones?.length) {
+    const wr = wb.addWorksheet("Mejoras", { views: [{ showGridLines: false }] });
+    wr.columns = [{ width: 4 }, { width: 6 }, { width: 110 }];
+    wr.mergeCells("B2:C2");
+    const rt = wr.getCell("B2");
+    rt.value = "OPCIONES DE MEJORA Y OBSERVACIONES";
+    rt.font = { bold: true, size: 16, color: { argb: BRAND } };
+    let rr = 4;
+    a.recomendaciones.forEach((rec, i) => {
+      const nc = wr.getCell(`B${rr}`);
+      nc.value = i + 1;
+      nc.font = { bold: true, color: { argb: "FFFFFFFF" } };
+      nc.alignment = { horizontal: "center", vertical: "top" };
+      nc.fill = { type: "pattern", pattern: "solid", fgColor: { argb: BRAND } };
+      const tc = wr.getCell(`C${rr}`);
+      tc.value = rec;
+      tc.alignment = { wrapText: true, vertical: "top" };
+      tc.font = { size: 11 };
+      wr.getRow(rr).height = Math.max(18, Math.ceil(rec.length / 90) * 16);
+      rr++;
+    });
+  }
+
   // ============ HOJA 4: DETALLE ============
+  const multiHoja = (a.hojas?.length ?? 0) > 1;
   const wd = wb.addWorksheet("Detalle Movimientos");
   wd.columns = [
     { header: "Fecha", key: "fecha", width: 10 },
@@ -219,14 +244,16 @@ export async function exportarExcel(
     { header: "Abono", key: "abono", width: 16 },
     { header: "Saldo", key: "saldo", width: 16 },
     { header: "Clasificación", key: "clasif", width: 26 },
+    ...(multiHoja ? [{ header: "Pestaña", key: "hoja", width: 18 }] : []),
   ];
   styleHeader(wd.getRow(1));
-  wd.autoFilter = "A1:H1";
+  wd.autoFilter = multiHoja ? "A1:I1" : "A1:H1";
   wd.views = [{ state: "frozen", ySplit: 1 }];
   for (const m of a.movimientos) {
     const row = wd.addRow({
       fecha: m.fecha, cart: m.nCartola, op: m.nOperacion, desc: m.descripcion,
       cargo: m.cargo || null, abono: m.abono || null, saldo: m.saldo, clasif: m.clasificacion,
+      ...(multiHoja ? { hoja: m.hoja } : {}),
     });
     ["cargo", "abono", "saldo"].forEach((k) => (row.getCell(k).numFmt = MONEY));
     if (m.abono > 0) row.getCell("abono").font = { color: { argb: INGRESO } };

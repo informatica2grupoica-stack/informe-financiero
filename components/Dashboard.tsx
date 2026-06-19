@@ -7,6 +7,7 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
   PieChart, Pie, Cell, Legend, LineChart, Line,
 } from "recharts";
+import { Lightbulb } from "lucide-react";
 
 const PALETTE = ["#1f4e79", "#2e86c1", "#48c9b0", "#f4d03f", "#eb984e", "#cb4335", "#884ea0", "#5d6d7e", "#16a085", "#d35400"];
 
@@ -33,6 +34,15 @@ export default function Dashboard({ a }: { a: Analisis }) {
 
   return (
     <div className="space-y-6">
+      {a.hojas?.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 text-sm text-slate-500">
+          <span className="font-medium text-slate-600">Pestañas analizadas:</span>
+          {a.hojas.map((h) => (
+            <span key={h} className="rounded-full bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700">{h}</span>
+          ))}
+        </div>
+      )}
+
       <KpiCards a={a} />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -119,6 +129,24 @@ export default function Dashboard({ a }: { a: Analisis }) {
           </table>
         </div>
       </div>
+
+      {/* Mejoras y oportunidades */}
+      {a.recomendaciones?.length > 0 && (
+        <div className="card overflow-hidden">
+          <div className="flex items-center gap-2 border-b border-slate-200 bg-amber-50 px-5 py-3">
+            <Lightbulb className="h-5 w-5 text-amber-600" />
+            <h3 className="text-base font-semibold text-slate-800">Opciones de mejora y observaciones</h3>
+          </div>
+          <ul className="divide-y divide-slate-100">
+            {a.recomendaciones.map((r, i) => (
+              <li key={i} className="flex gap-3 px-5 py-3 text-sm text-slate-600">
+                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-500 text-[11px] font-bold text-white">{i + 1}</span>
+                <span>{r}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

@@ -199,26 +199,9 @@ export async function exportarWord(a: Analisis, graficos?: GraficosInforme, nomb
     (mayorIngreso ? `Por el lado de los ingresos, la categoría más relevante fue "${mayorIngreso.categoria}" (${clp(mayorIngreso.ingresos)}, ${pct(mayorIngreso.ingresos, t.ingresos)} del total). ` : "");
 
   // ---------- Observaciones y recomendaciones automáticas ----------
-  const observaciones: string[] = [];
-  if (t.netoOperacional < 0)
-    observaciones.push(`El resultado operacional del período es deficitario (${clp(t.netoOperacional)}). Se recomienda revisar la estructura de egresos operativos y evaluar medidas de contención de gasto.`);
-  else
-    observaciones.push(`El resultado operacional es positivo (${clp(t.netoOperacional)}), lo que evidencia una operación que se autofinancia en el período analizado.`);
-
-  if (mayorEgreso && mayorEgreso.egresos / t.egresos > 0.3)
-    observaciones.push(`Existe una alta concentración del gasto en "${mayorEgreso.categoria}" (${pct(mayorEgreso.egresos, t.egresos)} del total). Se sugiere negociar condiciones con dicho proveedor/categoría y diversificar para reducir la dependencia.`);
-
-  observaciones.push(`Las tres principales categorías de egreso concentran ${pct(concentracionTop3, t.egresos)} del gasto total; conviene priorizar su seguimiento presupuestario.`);
-
-  if (mesesNegativos.length > 0)
-    observaciones.push(`Se identifican ${mesesNegativos.length} mes(es) con flujo neto negativo (${mesesNegativos.map((m) => m.mesNombre).join(", ")}). Se aconseja planificar la caja para anticipar estos meses de mayor presión.`);
-  else
-    observaciones.push(`Todos los meses del período presentaron flujo neto positivo, lo que refleja estabilidad en la generación de caja.`);
-
-  if (t.traspasos > t.ingresos * 0.2)
-    observaciones.push(`Los traspasos y movimientos no operacionales (${clp(t.traspasos)}) son significativos frente a los ingresos. Es importante mantenerlos separados del análisis operacional para no distorsionar los resultados.`);
-
-  observaciones.push(`El egreso promedio mensual del período fue de ${clp(promedioEgresoMensual)}; se recomienda utilizar este valor como referencia para la elaboración del presupuesto del siguiente período.`);
+  // Centralizadas en analytics.generarRecomendaciones para mantener una sola
+  // fuente de verdad entre la UI y el informe Word.
+  const observaciones = a.recomendaciones;
 
   const narrativaMensual =
     (mejorMes && peorMes

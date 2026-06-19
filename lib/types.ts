@@ -13,6 +13,7 @@ export type Movimiento = {
   clasificacionOriginal: string;
   tipo: "Ingreso" | "Egreso";
   esTraspaso: boolean;  // movimiento no operacional (traspasos internos)
+  hoja: string;         // pestaña de origen
 };
 
 export type ResumenCategoria = {
@@ -51,5 +52,7 @@ export type Analisis = {
   porMes: ResumenMes[];
   topEgresos: ResumenCategoria[];
   topIngresos: ResumenCategoria[];
+  hojas: string[];           // pestañas analizadas
+  recomendaciones: string[]; // observaciones y mejoras automáticas
   generadoEl: string;
 };

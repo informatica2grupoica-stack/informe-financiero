@@ -7,7 +7,7 @@ export function exportarDatasetPowerBI(a: Analisis, nombre = "Dataset_PowerBI.cs
   const headers = [
     "Fecha", "Mes", "MesNombre", "NumeroCartola", "NumeroOperacion",
     "Descripcion", "Clasificacion", "Tipo", "EsTraspaso",
-    "Ingreso", "Egreso", "Neto", "Saldo",
+    "Ingreso", "Egreso", "Neto", "Saldo", "Pestania",
   ];
 
   const esc = (v: unknown) => {
@@ -20,7 +20,7 @@ export function exportarDatasetPowerBI(a: Analisis, nombre = "Dataset_PowerBI.cs
     lines.push([
       m.fechaISO, m.mes, m.mesNombre, m.nCartola ?? "", m.nOperacion ?? "",
       m.descripcion, m.clasificacion, m.tipo, m.esTraspaso ? "Sí" : "No",
-      m.abono, m.cargo, m.abono - m.cargo, m.saldo ?? "",
+      m.abono, m.cargo, m.abono - m.cargo, m.saldo ?? "", m.hoja ?? "",
     ].map(esc).join(";"));
   }
 
