@@ -9,16 +9,18 @@ const MESES = [
 
 // Encabezados esperados (flexibles a tildes/mayusculas)
 function findCol(headers: string[], candidates: string[]): number {
-  const norm = (s: string) =>
-    s.toString().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").trim();
-  const H = headers.map(norm);
+  const norm = (s: unknown) =>
+    String(s ?? "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").trim();
+  // Array.from densifica: las cabeceras pueden venir como array disperso
+  // (huecos) cuando una columna no tiene título, lo que dejaría H[i] = undefined.
+  const H = Array.from({ length: headers.length }, (_, i) => norm(headers[i]));
   for (const c of candidates) {
     const i = H.indexOf(norm(c));
     if (i >= 0) return i;
   }
   // match parcial
   for (let i = 0; i < H.length; i++) {
-    if (candidates.some((c) => H[i].includes(norm(c)))) return i;
+    if (H[i] && candidates.some((c) => H[i].includes(norm(c)))) return i;
   }
   return -1;
 }
